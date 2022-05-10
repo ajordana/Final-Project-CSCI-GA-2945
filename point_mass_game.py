@@ -14,10 +14,10 @@ for i in range(f.T):
 eta_x = 2e-4
 eta_y = 2e-4
 
-T = 1e3
+T = 1e5
 
 # x_GDA, y_GDA, x_grad, y_grad = GDA(f, x0, y0, eta_x, eta_y, T)
-u, s, x_grad, y_grad = FR(f, x0, y0, eta_x, eta_y, T, reccord=False)
+u, s, x_grad, y_grad = GDA(f, x0, y0, eta_x, eta_y, T, reccord=False)
 
 
 states = [f.x0] + [s[i * f.nx : (i + 1) * f.nx] for i in range(f.T)]
@@ -36,31 +36,44 @@ plt.grid()
 plt.title("Position trajectory")
 
 
-fig, (ax1, ax2) = plt.subplots(2, 1)
+fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(10, 8))
 for t in range(f.T):
     ax1.plot(np.array([t, t+1]), np.array([states[t][0], next_states[t][0]]), 'black')
     ax2.plot(np.array([t, t+1]), np.array([states[t][1], next_states[t][1]]), 'black')
-ax1.set_ylabel("x")
-ax2.set_ylabel("y")
+    ax3.plot(np.array([t, t+1]), np.array([states[t][2], next_states[t][2]]), 'black')
+    ax4.plot(np.array([t, t+1]), np.array([states[t][3], next_states[t][3]]), 'black')
+ax1.set_ylabel("$p_x$")
+ax2.set_ylabel("$p_y$")
+ax3.set_ylabel("$v_x$")
+ax4.set_ylabel("$v_y$")
 ax1.grid()
 ax2.grid()
+ax3.grid()
+ax4.grid()
 
-plt.figure()
-plt.plot(np.array(controls)[:, 0], label="u_x")
-plt.plot(np.array(controls)[:, 1], label="u_y")
-plt.xlabel("Time")
-plt.ylabel("Control")
-plt.grid()
-plt.title("Control inputs")
-plt.legend()
+fig, (ax1, ax2) = plt.subplots(2, 1)
+ax1.plot(np.array(controls)[:, 0], label="u_x")
+ax2.plot(np.array(controls)[:, 1], label="u_y")
+ax1.grid()
+ax2.grid()
+ax2.set_xlabel("Time")
+ax1.set_ylabel("$u_x$")
+ax2.set_ylabel("$u_y$")
 
 
 
-plt.figure()
-plt.plot(np.array(x_grad), label="x grad")
-plt.plot(np.array(y_grad), label="y grad")
-plt.grid()
-plt.legend()
+fig, (ax1, ax2) = plt.subplots(2, 1)
+ax1.plot(np.array(x_grad))
+ax2.plot(np.array(y_grad))
+
+
+ax2.set_xlabel("iterations")
+ax1.set_ylabel("x grad")
+ax2.set_ylabel("y grad")
+ax1.grid()
+ax2.grid()
+ax1.set_yscale('log')
+ax2.set_yscale('log')
 
 
 

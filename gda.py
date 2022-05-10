@@ -15,10 +15,13 @@ def GDA(func, x0, y0, eta_x, eta_y, T, gamma=1, reccord=True):
         y = y + eta_y * func.fy
         x_grad.append(np.linalg.norm(func.fx))
         y_grad.append(np.linalg.norm(func.fy)) 
-        x_traj.append(x)
-        y_traj.append(y)
-    return x_traj, y_traj, x_grad, y_grad
-
+        if reccord:
+            x_traj.append(x)
+            y_traj.append(y)
+    if reccord:
+        return x_traj, y_traj, x_grad, y_grad
+    else:
+        return x, y, x_grad, y_grad
 
 def FR(func, x0, y0, eta_x, eta_y, T, reccord=True):
     x = x0

@@ -77,9 +77,6 @@ class point_mass(point_mass_model):
         self.eval_hessians(x, y)
         print(np.linalg.norm(self.fx))
         print(np.linalg.norm(self.fy))
-        # self.fxx = "not implemented"
-        # self.fyy = "not implemented"
-        # self.fyx = "not implemented"
         self.fxy = self.fyx
 
     def eval_hessians(self, u, s):
