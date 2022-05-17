@@ -5,7 +5,7 @@ from gda import GDA, FR
 
 from test_examples.examples import g1, g2, g3, g4
 
-ex = 3
+ex = 4
 
 if ex == 4:
     f = g4()
@@ -20,7 +20,6 @@ if ex == 3:
     y0 = 4
     T = 2e5
     gammas = [1, 4, 6, 16, 32]
-
 
 
 eta_x = 1e-3
@@ -38,12 +37,12 @@ v = np.linspace(-6, 6, 500)
 x, y = np.meshgrid(v, v)
 z = f.eval(x, y)
 plt.contourf(x, y, z, 25)
-plt.plot(np.array(x_GDA1), np.array(y_GDA1), linewidth=2, label="gamma = " + str(gammas[0]) )
-plt.plot(np.array(x_GDA2), np.array(y_GDA2), linewidth=2, label="gamma = " + str(gammas[1]) )
-plt.plot(np.array(x_GDA3), np.array(y_GDA3), linewidth=2, label="gamma = " + str(gammas[2]) )
-plt.plot(np.array(x_GDA4), np.array(y_GDA4), linewidth=2, label="gamma = " + str(gammas[3]) )
-plt.plot(np.array(x_GDA5), np.array(y_GDA5), linewidth=2, label="gamma = " + str(gammas[4]) )
- 
+plt.plot(np.array(x_GDA1), np.array(y_GDA1), linewidth=2, label="gamma = " + str(gammas[0]))
+plt.plot(np.array(x_GDA2), np.array(y_GDA2), linewidth=2, label="gamma = " + str(gammas[1]))
+plt.plot(np.array(x_GDA3), np.array(y_GDA3), linewidth=2, label="gamma = " + str(gammas[2]))
+plt.plot(np.array(x_GDA4), np.array(y_GDA4), linewidth=2, label="gamma = " + str(gammas[3]))
+plt.plot(np.array(x_GDA5), np.array(y_GDA5), linewidth=2, label="gamma = " + str(gammas[4]))
+
 plt.xlabel("$x$")
 plt.ylabel("$y$")
 plt.colorbar()
@@ -74,16 +73,16 @@ ax2.plot(np.array(y_GDA_grad4), label="gamma = " + str(gammas[3]))
 ax1.plot(np.array(x_GDA_grad5), label="gamma = " + str(gammas[4]))
 ax2.plot(np.array(y_GDA_grad5), label="gamma = " + str(gammas[4]))
 ax2.set_xlabel("iterations")
-ax1.set_ylabel("x grad")
-ax2.set_ylabel("y grad")
+ax1.set_ylabel(r"$\Vert \nabla_x g \Vert$")
+ax2.set_ylabel(r"$\Vert \nabla_y g \Vert$")
 ax1.grid()
 ax2.grid()
-ax1.set_yscale('log')
-ax2.set_yscale('log')
+ax1.set_yscale("log")
+ax2.set_yscale("log")
 
 
 handles, labels = ax1.get_legend_handles_labels()
-fig.legend(handles, labels, loc='upper right', prop={'size': 10})
+fig.legend(handles, labels, loc="upper right", prop={"size": 10})
 
 if ex == 3:
     plt.savefig("plots/log_plot3_inf_study.png")

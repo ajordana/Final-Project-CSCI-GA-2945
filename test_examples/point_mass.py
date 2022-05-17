@@ -9,7 +9,7 @@ class point_mass_model:
         self.dt = 0.1
         self.x0 = np.zeros(4)
         self.Q = 0.1 * np.diag(np.array([1, 1, 0.01, 0.01]))
-        self.R =  1e-1 * np.diag(np.array([1, 1]))
+        self.R = 1e-1 * np.diag(np.array([1, 1]))
         self.target = np.array([1, 0, 0, 0])
         self.ter_coeff = 200
         self.P = 1e-3 * np.eye(self.nx)
@@ -19,7 +19,7 @@ class point_mass_model:
         dpx = s[2]
         dpy = s[3]
         dvx = u[0]
-        dvy = u[1] 
+        dvy = u[1]
         return s + np.array([dpx, dpy, dvx, dvy]) * self.dt
 
     def dynx(self, s, u):
@@ -44,7 +44,7 @@ class point_mass_model:
             return cost + 0.5 * np.vdot(s_, self.Q @ s_) + 0.5 * np.vdot(u, self.R @ u)
 
     def costx(self, s, u=None):
-        lx = np.array([0, -0.1 / (1 + 0.1 * s[1]) ** 11, 0, 0]) 
+        lx = np.array([0, -0.1 / (1 + 0.1 * s[1]) ** 11, 0, 0])
         if u is None:
             return self.ter_coeff * self.Q @ (s - self.target)
         else:
@@ -52,7 +52,7 @@ class point_mass_model:
 
     def costxx(self, s, u=None):
         lxx = np.zeros((self.nx, self.nx))
-        lxx[1, 1] =  0.11 / (0.1 * s[1] + 1.0) ** 12 
+        lxx[1, 1] = 0.11 / (0.1 * s[1] + 1.0) ** 12
         if u is None:
             return self.ter_coeff * self.Q
         else:
@@ -91,17 +91,31 @@ class point_mass(point_mass_model):
         # state * control
         for t in range(self.T):
             if t > 0:
-                self.fyx[(t-1) * self.nx : t * self.nx, t * self.nu : (t + 1) * self.nu] = - dinx_list[t].T @ self.Pinv @ dinu_list[t]
-            self.fyx[t * self.nx : (t + 1) * self.nx, t * self.nu : (t + 1) * self.nu] =  self.Pinv @ dinu_list[t]
+                self.fyx[
+                    (t - 1) * self.nx : t * self.nx, t * self.nu : (t + 1) * self.nu
+                ] = (-dinx_list[t].T @ self.Pinv @ dinu_list[t])
+            self.fyx[
+                t * self.nx : (t + 1) * self.nx, t * self.nu : (t + 1) * self.nu
+            ] = (self.Pinv @ dinu_list[t])
 
         # state * state
-        for t in range(1, self.T):            
-            self.fyy[(t-1) * self.nx : t * self.nx, (t-1) * self.nx : t * self.nx] = self.costxx(states[t], controls[t]) - self.Pinv - dinx_list[t].T @ self.Pinv @ dinx_list[t]
+        for t in range(1, self.T):
+            self.fyy[
+                (t - 1) * self.nx : t * self.nx, (t - 1) * self.nx : t * self.nx
+            ] = (
+                self.costxx(states[t], controls[t])
+                - self.Pinv
+                - dinx_list[t].T @ self.Pinv @ dinx_list[t]
+            )
 
-            self.fyy[(t-1) * self.nx : t * self.nx, t * self.nx : (t+1) * self.nx] = dinx_list[t].T @ self.Pinv 
-            self.fyy[t * self.nx : (t+1) * self.nx, (t-1) * self.nx : t * self.nx] = self.Pinv @ dinx_list[t]
+            self.fyy[
+                (t - 1) * self.nx : t * self.nx, t * self.nx : (t + 1) * self.nx
+            ] = (dinx_list[t].T @ self.Pinv)
+            self.fyy[
+                t * self.nx : (t + 1) * self.nx, (t - 1) * self.nx : t * self.nx
+            ] = (self.Pinv @ dinx_list[t])
 
-        self.fyy[-self.nx :, -self.nx :] = self.costxx(states[-1]) - self.Pinv 
+        self.fyy[-self.nx :, -self.nx :] = self.costxx(states[-1]) - self.Pinv
 
     def eval_grad(self, u, s):
         states = [self.x0] + [s[i * self.nx : (i + 1) * self.nx] for i in range(self.T)]
@@ -118,9 +132,13 @@ class point_mass(point_mass_model):
             )
 
         for t in range(1, self.T):
-            self.fy[(t - 1) * self.nx : t * self.nx] = self.costx(states[t], controls[t])+ dinx_list[t].T @ self.Pinv @ w_list[t] - self.Pinv @ w_list[t - 1]
-            
-        self.fy[-self.nx:] = self.costx(states[-1]) - self.Pinv @ w_list[-1]
+            self.fy[(t - 1) * self.nx : t * self.nx] = (
+                self.costx(states[t], controls[t])
+                + dinx_list[t].T @ self.Pinv @ w_list[t]
+                - self.Pinv @ w_list[t - 1]
+            )
+
+        self.fy[-self.nx :] = self.costx(states[-1]) - self.Pinv @ w_list[-1]
 
     def eval(self, u, s):
         states = [self.x0] + [s[i * self.nx : (i + 1) * self.nx] for i in range(self.T)]

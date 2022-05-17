@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 
-# Example from Follow-the-Ridge (FR). 
+# Example from Follow-the-Ridge (FR).
 class g1:
     def __init__(self):
         self.f = 0
@@ -23,7 +23,8 @@ class g1:
     def eval(self, x, y):
         return -3 * x ** 2 - y ** 2 + 4 * x * y
 
-# Example from Follow-the-Ridge (FR). 
+
+# Example from Follow-the-Ridge (FR).
 class g2:
     def __init__(self):
         self.f = 0
@@ -45,7 +46,8 @@ class g2:
     def eval(self, x, y):
         return 3 * x ** 2 + y ** 2 + 4 * x * y
 
-# Example from Follow-the-Ridge (FR). 
+
+# Example from Follow-the-Ridge (FR).
 class g3:
     def __init__(self):
         self.f = 0
@@ -106,4 +108,4 @@ class g4:
         self.fxy = self.fyx
 
     def eval(self, x, y):
-        return 2 * x ** 2 + y ** 2 + 4 * x * y + (4/3) * y ** 3 - y**4 / 4 
+        return 2 * x ** 2 + y ** 2 + 4 * x * y + (4 / 3) * y ** 3 - y ** 4 / 4
